@@ -37,7 +37,7 @@ spawnerFormDefaults:
   ################################################################
   image:
     # the default container image
-    value: kubeflownotebookswg/jupyter-scipy:v1.9.2
+    value: kubeflownotebookswg/jupyter-pytorch-cuda-full:v1.9.2
 
     # the list of available container images in the dropdown
     options:
@@ -204,7 +204,29 @@ spawnerFormDefaults:
     value: ""
 
     # the list of available affinity configs in the dropdown
-    options: []
+    options:
+      - configKey: "tesla_gpu"
+        displayName: "Node has: tesla gpu"
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "has-gpu"
+                      operator: "In"
+                      values:
+                        - "tesla"
+      - configKey: "gforce_gpu"
+        displayName: "Node has: gforce gpu"
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "has-gpu"
+                      operator: "In"
+                      values:
+                        - "gforce"
     #options:
     #  - configKey: "dedicated_node_per_notebook"
     #    displayName: "Dedicated Node Per Notebook"
@@ -243,7 +265,21 @@ spawnerFormDefaults:
     value: ""
 
     # the list of available toleration groups in the dropdown
-    options: []
+    options:
+      - groupKey: "gpu_nodes_tesla"
+        displayName: "GPU Nodes: with tesla gpu?"
+        tolerations:
+          - key: "has-gpu"
+            operator: "Equal"
+            value: "tesla"
+            effect: "NoSchedule"
+      - groupKey: "gpu_nodes_gforce"
+        displayName: "GPU Nodes: with gforce gpu?"
+        tolerations:
+          - key: "has-gpu"
+            operator: "Equal"
+            value: "gforce"
+            effect: "NoSchedule"
     #options:
     #  - groupKey: "group_1"
     #    displayName: "4 CPU 8Gb Mem at ~$X.XXX USD per day"
